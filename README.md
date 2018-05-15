@@ -1,3 +1,3 @@
 # LG
 
-![alt text](https://imgur.com/AMzLm6O)
+![alt text](https://i.imgur.com/AMzLm6O.png)
