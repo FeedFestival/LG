@@ -71,7 +71,7 @@ public class Stats : MonoBehaviour
 
         if (unit != null)
         {
-            healthBar = Fight.CreateHPBar(unit._unit, unit.HealthBarTarget, unit.UnitInteligence.IAm);
+            healthBar = Fight.CreateHPBar(unit._unit, unit.HealthBarTarget, unit.Intell.IAm);
             navAgent = unit.gameObject.GetComponent<NavMeshAgent>();
             navAgent.speed = MovementSpeed;
         }

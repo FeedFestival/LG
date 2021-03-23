@@ -8,7 +8,7 @@ public interface IUnit
 {
     int Index { get; set; }
 
-    UnitInteligence UnitInteligence { get; set; }
+    Intell Intell { get; set; }
     Stats Stats { get; set; }
 
     void Init(Unit.OnHit onHit);

@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
     // Use this for initialization
     public void StartFight()
     {
-        //Game.Instance().UiController.HealthBarsPanel.SetActive(true);
+        HealthBarController._.gameObject.SetActive(true);
 
         _moveTowardsTheAction = MoveTowardsTheAction();
         StartCoroutine(_moveTowardsTheAction);
@@ -52,14 +52,14 @@ public class CameraController : MonoBehaviour
 
         float maxZ = 100f; float minZ = -1f;
         int aliveUnits = 0;
-        for (var i = 0; i < Fight.Instance().PlayerUnits.Count; i++)
+        for (var i = 0; i < Fight._.PlayerUnits.Count; i++)
         {
-            if (Fight.Instance().PlayerUnits[i].Stats.IsDead == false)
+            if (Fight._.PlayerUnits[i].Stats.IsDead == false)
                 aliveUnits++;
         }
         if (aliveUnits > 1)
         {
-            foreach (Unit unit in Fight.Instance().PlayerUnits)
+            foreach (Unit unit in Fight._.PlayerUnits)
             {
                 if (unit.transform.position.z < maxZ)
                 {
@@ -82,7 +82,7 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            var z = Fight.Instance().PlayerUnits[0].gameObject.transform.position.z + 7;
+            var z = Fight._.PlayerUnits[0].gameObject.transform.position.z + 7;
             var newPosition = new Vector3(x, y, z);
             LeanTween.move(transform.gameObject, newPosition, _duration);
         }

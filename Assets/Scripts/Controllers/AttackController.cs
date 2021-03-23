@@ -10,7 +10,7 @@ public class AttackController : MonoBehaviour
     private MoveController _moveController;
 
     [HideInInspector]
-    public UnitInteligence UnitInteligence;
+    public Intell Intell;
 
     private IAm _targetEnemyTeam;
     private int? _targetEnemyIndex;
@@ -33,7 +33,7 @@ public class AttackController : MonoBehaviour
         if (unit.Stats.IsDead)
             return;
         _targetEnemyIndex = unit._unit.Index;
-        _targetEnemyTeam = unit.UnitInteligence.IAm;
+        _targetEnemyTeam = unit.Intell.IAm;
         
         //Debug.Log(gameObject.name + ": enemy (" + TargetEnemy.gameObject.name + ") is in range.");
 
@@ -42,7 +42,7 @@ public class AttackController : MonoBehaviour
 
         FightUtils.FaceEnemy(unitGo.transform.position, transform);
         
-        UnitInteligence.AtackSensor.gameObject.SetActive(false);
+        Intell.AtackSensor.gameObject.SetActive(false);
     }
 
     public void OnHit(
@@ -53,7 +53,7 @@ public class AttackController : MonoBehaviour
     {
         if (_targetEnemyIndex != null)
         {
-            var targetEnemy = Fight.Instance().GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
+            var targetEnemy = Fight._.GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
 
             var curHealth = targetEnemy.Stats.CurrentHealth - _unit.Stats.AttackDamage;
             if (curHealth < 0)
@@ -63,8 +63,8 @@ public class AttackController : MonoBehaviour
             else
                 targetEnemy.Stats.CurrentHealth = curHealth;
         }
-        else if (UnitInteligence.IsEnemyInViewRange() == false)
-            Fight.ExecuteOrder66(GetComponent<Unit>(), ally: UnitInteligence.IAm == IAm.Ally);
+        else if (Intell.IsEnemyInViewRange() == false)
+            Fight.ExecuteOrder66(GetComponent<Unit>(), ally: Intell.IAm == IAm.Ally);
     }
 
     public void TrySetTarget(GameObject unitGo)
@@ -75,7 +75,7 @@ public class AttackController : MonoBehaviour
             if (unit.Stats.IsDead)
                 return;
             _targetEnemyIndex = unit._unit.Index;
-            _targetEnemyTeam = unit.UnitInteligence.IAm;
+            _targetEnemyTeam = unit.Intell.IAm;
         }
 
         if (_targetEnemyIndex == null)
@@ -83,7 +83,7 @@ public class AttackController : MonoBehaviour
 
         //Debug.Log(gameObject.name + ": I will deal with the enemy (" + TargetEnemy.gameObject.name + ")");
 
-        var targetEnemy = Fight.Instance().GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
+        var targetEnemy = Fight._.GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
 
         var distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
         if (_unit.Stats.AttackRange >= distance)
@@ -92,7 +92,7 @@ public class AttackController : MonoBehaviour
         }
         else
         {
-            UnitInteligence.AtackSensor.gameObject.SetActive(true);
+            Intell.AtackSensor.gameObject.SetActive(true);
             _moveController.FollowObject(targetEnemy.transform);
         }
     }
@@ -103,7 +103,7 @@ public class AttackController : MonoBehaviour
         {
             return transform.forward * _unit.Stats.AttackRange + transform.position;
         }
-        return Fight.Instance().GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value).transform.position;
+        return Fight._.GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value).transform.position;
     }
 
     private void KillTarget(Unit targetEnemy)
@@ -120,7 +120,7 @@ public class AttackController : MonoBehaviour
         targetEnemy._unit.YouDeadBro();
 
         // 4. look fast for another enemy.
-        if (UnitInteligence.IsEnemyInViewRange() == false)
-            Fight.ExecuteOrder66(GetComponent<Unit>(), ally: UnitInteligence.IAm == IAm.Ally);
+        if (Intell.IsEnemyInViewRange() == false)
+            Fight.ExecuteOrder66(GetComponent<Unit>(), ally: Intell.IAm == IAm.Ally);
     }
 }

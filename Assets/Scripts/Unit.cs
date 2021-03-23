@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour
     private AttackController _attackController;
 
     [HideInInspector]
-    public UnitInteligence UnitInteligence;
+    public Intell Intell;
 
     public IUnit _unit;
 
@@ -78,10 +78,10 @@ public class Unit : MonoBehaviour
 
     public void DisableColliders()
     {
-        if (UnitInteligence == null)
-            UnitInteligence = GetComponent<UnitInteligence>();
-        UnitInteligence.AtackSensor.gameObject.SetActive(false);
-        UnitInteligence.ViewSensor.gameObject.SetActive(false);
+        if (Intell == null)
+            Intell = GetComponent<Intell>();
+        Intell.AtackSensor.gameObject.SetActive(false);
+        Intell.ViewSensor.gameObject.SetActive(false);
 
         GetComponent<CapsuleCollider>().enabled = false;
     }
@@ -93,15 +93,15 @@ public class Unit : MonoBehaviour
     }
 
     private void SetupInteligence(IAm iAm) {
-        UnitInteligence = GetComponent<UnitInteligence>();
-        if (UnitInteligence == null)
+        Intell = GetComponent<Intell>();
+        if (Intell == null)
         {
             Debug.LogError("Unit has no inteligence.");
             return;
         }
-        _unit.UnitInteligence = UnitInteligence;
-        UnitInteligence.IAm = iAm;
-        UnitInteligence.Init(_unit);
+        _unit.Intell = Intell;
+        Intell.IAm = iAm;
+        Intell.Init(_unit);
         gameObject.tag = iAm.ToString();
     }
 
@@ -126,8 +126,8 @@ public class Unit : MonoBehaviour
             Debug.LogError("Unit has no Attack controller.");
             return;
         }
-        UnitInteligence.SetupAtackSensor(_attackController);
-        _attackController.UnitInteligence = UnitInteligence;
+        Intell.SetupAtackSensor(_attackController);
+        _attackController.Intell = Intell;
         _attackController.Init(_unit, MoveController);
     }
 
@@ -139,8 +139,8 @@ public class Unit : MonoBehaviour
             Debug.LogError("Unit has no Move controller.");
             return;
         }
-        MoveController.UnitInteligence = UnitInteligence;
-        UnitInteligence._moveController = MoveController;
+        MoveController.Intell = Intell;
+        Intell._moveController = MoveController;
         //
         var navAgent = GetComponent<NavMeshAgent>();
         if (navAgent == null)

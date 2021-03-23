@@ -21,8 +21,8 @@ public class Dummy : MonoBehaviour, IUnit
     private int _index;
     public int Index { get { return _index; } set { _index = value; } }
 
-    private UnitInteligence _unitInteligence;
-    public UnitInteligence UnitInteligence { get { return _unitInteligence; } set { _unitInteligence = value; } }
+    private Intell _intell;
+    public Intell Intell { get { return _intell; } set { _intell = value; } }
 
     private Stats _stats;
     public Stats Stats { get { return _stats; } set { _stats = value; } }
@@ -31,7 +31,7 @@ public class Dummy : MonoBehaviour, IUnit
     {
         _onHit = onHit;
 
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
+        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
         
     }
 

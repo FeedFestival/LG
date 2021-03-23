@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts.Utils;
+using Assets.Scripts.utils;
 
 public class HealthBar : MonoBehaviour
 {
@@ -50,8 +51,8 @@ public class HealthBar : MonoBehaviour
 
     public void CalculateHealthBar()
     {
-        var percent = UsefullUtils.GetValuePercent(_unit.Stats.CurrentHealth, _unit.Stats.Health);
-        var currentHealthEquivalent = UsefullUtils.GetPercent(_fullHealthEquivalent, percent);
+        var percent = __percent.What(_unit.Stats.CurrentHealth, _unit.Stats.Health);  // GetValuePercent
+        var currentHealthEquivalent = __percent.Find(_fullHealthEquivalent, percent);      // GetPercent
         HealthImage.rectTransform.sizeDelta = new Vector2(currentHealthEquivalent ,HealthImage.rectTransform.sizeDelta.y);
     }
 }

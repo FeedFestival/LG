@@ -1,7 +1,6 @@
-﻿using Assets.Scripts.Utils;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.utils;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -71,7 +70,7 @@ public class Projectile : MonoBehaviour
             LTDescr _rotateProjectile = LeanTween.rotateAroundLocal(gameObject, Vector3.left, 180f, projectileTime);
             _rotateProjectileTweenId = _rotateProjectile.id;
 
-            _whileFire = WhileFireFire(projectileTime + UsefullUtils.GetPercent(projectileTime, 50f));
+            _whileFire = WhileFireFire(projectileTime + __percent.Find(projectileTime, 50f)); // GetPercent
             StartCoroutine(_whileFire);
         }
     }
@@ -98,8 +97,8 @@ public class Projectile : MonoBehaviour
     private float CalculateProjectileSpeed(Vector3 pos)
     {
         float distance = Vector3.Distance(pos, transform.position);
-        float percent = UsefullUtils.GetValuePercent(distance, _attackRange);
-        float speed = UsefullUtils.GetPercent(MaxProjectileSpeed, percent);
+        float percent = __percent.What(distance, _attackRange);   // GetValuePercent
+        float speed = __percent.Find(MaxProjectileSpeed, percent);     // GetPercent
         return speed;
     }
 

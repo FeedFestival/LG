@@ -6,17 +6,12 @@ using UnityEngine;
 
 public class Fight : MonoBehaviour
 {
-    /*
-     * Singleton FIGHT!
-     */
-    private static Fight _fight;
-    public static Fight Instance()
-    {
-        return _fight;
-    }
+    private static Fight _this;
+    public static Fight _ { get { return _this; } }
+
     void Awake()
     {
-        _fight = this;
+        _this = this;
         PlayerUnits = null;
         EnemyUnits = null;
     }
@@ -55,7 +50,7 @@ public class Fight : MonoBehaviour
     {
         if (PlayerUnits == null)
             PlayerUnits = new List<Unit>();
-            PlayerUnits.Add(unit);
+        PlayerUnits.Add(unit);
     }
 
     public void InitUnits()
@@ -73,9 +68,6 @@ public class Fight : MonoBehaviour
             InitUnit(i, unit, IAm.Enemy);
             i++;
         }
-
-        // TODO: this should be moved.
-        Game.Instance().UiController.Init();
     }
 
     public void InitUnit(int index, Unit unit, IAm iAm)
@@ -107,7 +99,7 @@ public class Fight : MonoBehaviour
             }
 
         //
-        Game.Instance().CameraController.StartFight();
+        // Game._.CameraController.StartFight();
     }
 
     public static void ExecuteOrder66(Unit unit, Transform objective = null, bool ally = true)
@@ -115,35 +107,39 @@ public class Fight : MonoBehaviour
         var xPos = unit.transform.position.x;
         Vector3 destination;
         if (objective == null)
-            objective = ally ? _fight.AllyObjectivePoint : _fight.EnemyObjectivePoint;
+        {
+            objective = ally ? _this.AllyObjectivePoint : _this.EnemyObjectivePoint;
+        }
         destination = new Vector3(xPos, objective.position.y, objective.position.z);
         unit.MoveController.SetDestination(destination);
     }
 
     public static HealthBar CreateHPBar(IUnit unit, Transform hpTarget, IAm iAm)
     {
-        if (Game.Instance().UiController.HealthBarsPanel.gameObject.activeSelf == false)
-            Game.Instance().UiController.HealthBarsPanel.gameObject.SetActive(true);
+        if (HealthBarController._.gameObject.activeSelf == false)
+        {
+            HealthBarController._.gameObject.SetActive(true);
+        }
 
         GameObject go = Instantiate(
             Resources.Load("Prefabs/UI/HealthBar", typeof(GameObject)),
-            Vector3.zero, Quaternion.identity, Game.Instance().UiController.HealthBarsPanel.transform
+            Vector3.zero, Quaternion.identity, HealthBarController._.transform
             ) as GameObject;
         var rect = go.GetComponent<RectTransform>();
         rect.localPosition = Vector3.zero;
         rect.localEulerAngles = Vector3.zero;
 
         var hp = go.GetComponent<HealthBar>();
-        var hpColor = (iAm == IAm.Ally) ? Game.Instance().PlayerHpBars : Game.Instance().EnemyHpBars;
+        var hpColor = (iAm == IAm.Ally) ? ColorBank._.Green_Pastel_Darker : ColorBank._.Red_Maroon_Flush;
         hp.HealthImage.color = hpColor;
-        hp.Init(unit, hpTarget, Game.Instance().UiController.Canvas);
+        hp.Init(unit, hpTarget, HealthBarController._.CanvasRect);
         return hp;
     }
 
     public Unit GetUnit(IAm targetEnemyTeam, int targetEnemyIndex)
     {
         if (targetEnemyTeam == IAm.Ally)
-            return Instance().PlayerUnits[targetEnemyIndex];
-        return Instance().EnemyUnits[targetEnemyIndex];
+            return _.PlayerUnits[targetEnemyIndex];
+        return _.EnemyUnits[targetEnemyIndex];
     }
 }

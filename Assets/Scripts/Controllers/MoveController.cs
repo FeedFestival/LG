@@ -10,7 +10,7 @@ public class MoveController : MonoBehaviour
     public GameObject UnitTarget;
 
     [HideInInspector]
-    public UnitInteligence UnitInteligence;
+    public Intell Intell;
 
     private NavMeshAgent _navAgent;
     private IUnit _unit;
@@ -57,7 +57,7 @@ public class MoveController : MonoBehaviour
         if (_unit == null)
             return;
 
-        if (UnitInteligence.UnitPrimaryState == UnitPrimaryState.Walk)
+        if (Intell.UnitPrimaryState == UnitPrimaryState.Walk)
         {
             SteerWalkingDirection();
         }
@@ -104,7 +104,7 @@ public class MoveController : MonoBehaviour
             //      - And an action is set in mind
             //      - And the Player is not busy with another action.
             //  --> That means we must fire the Action in mind and exit.
-            if (UnitInteligence.UnitActionInMind != UnitActionInMind.None && UnitInteligence.UnitPrimaryState != UnitPrimaryState.Busy)
+            if (Intell.UnitActionInMind != UnitActionInMind.None && Intell.UnitPrimaryState != UnitPrimaryState.Busy)
             {
                 _navAgent.enabled = false;
                 //_unit.UnitActionHandler.StartAction();
@@ -114,15 +114,15 @@ public class MoveController : MonoBehaviour
 
             //  If we finish the journey
             //      - And for some reason the unit is Busy - dont go into Attack.
-            if (UnitInteligence.UnitPrimaryState != UnitPrimaryState.Busy)
+            if (Intell.UnitPrimaryState != UnitPrimaryState.Busy)
             {
-                UnitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
+                Intell.UnitPrimaryState = UnitPrimaryState.Idle;
                 //_unit.UnitBasicAnimation.Play(_unit.UnitPrimaryState);
             }
         }
         else
         {
-            UnitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
+            Intell.UnitPrimaryState = UnitPrimaryState.Idle;
             //_unit.UnitBasicAnimation.Play(_unit.UnitPrimaryState);
 
             StopCoroutine(_lerpRotation);
@@ -139,7 +139,7 @@ public class MoveController : MonoBehaviour
         JustMove(UnitTarget.transform.position);
         _navAgent.isStopped = false;
 
-        UnitInteligence.UnitPrimaryState = UnitPrimaryState.Walk;
+        Intell.UnitPrimaryState = UnitPrimaryState.Walk;
     }
 
     private void JustMove(Vector3 pos)
@@ -154,7 +154,7 @@ public class MoveController : MonoBehaviour
 
     public void GoToTarget()
     {
-        if (UnitInteligence.IsImobilized)
+        if (Intell.IsImobilized)
             return;
 
         UnitTarget.SetActive(true);

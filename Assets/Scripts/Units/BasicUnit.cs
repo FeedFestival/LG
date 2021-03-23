@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Assets.Scripts;
+using Assets.Scripts.utils;
 using Assets.Scripts.Utils;
 using UnityEngine;
 
@@ -25,8 +25,8 @@ public class BasicUnit : MonoBehaviour, IUnit
     private int _index;
     public int Index { get { return _index; } set { _index = value; } }
 
-    private UnitInteligence _unitInteligence;
-    public UnitInteligence UnitInteligence { get { return _unitInteligence; } set { _unitInteligence = value; } }
+    private Intell _intell;
+    public Intell Intell { get { return _intell; } set { _intell = value; } }
 
     private Stats _stats;
     public Stats Stats { get { return _stats; } set { _stats = value; } }
@@ -35,8 +35,8 @@ public class BasicUnit : MonoBehaviour, IUnit
     {
         _onHit = onHit;
 
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
-        
+        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
+
         if (Stats.AttackSpeed == 0)
             Stats.AttackSpeed = FightUtils.GetDefaultAttackSpeed(Avatar, "Reload_Body", "Attack_Body");
 
@@ -93,10 +93,10 @@ public class BasicUnit : MonoBehaviour, IUnit
 
     private void InternalAttack()
     {
-        var firstAttack = _unitInteligence.UnitActionState != UnitActionState.Attacking;
+        var firstAttack = _intell.UnitActionState != UnitActionState.Attacking;
 
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Busy;
-        _unitInteligence.UnitActionState = UnitActionState.Attacking;
+        _intell.UnitPrimaryState = UnitPrimaryState.Busy;
+        _intell.UnitActionState = UnitActionState.Attacking;
 
         if (Avatar == null)
             return;
@@ -123,7 +123,7 @@ public class BasicUnit : MonoBehaviour, IUnit
     private void AfterReload()
     {
         _afterReload = null;
-        
+
         if (FightUtils.StopAttacking(this))
         {
             StopAttack();
@@ -137,14 +137,15 @@ public class BasicUnit : MonoBehaviour, IUnit
         FireProjectile();
 
         var animTime = Avatar["Attack_Body"].length;
-        _afterAttack = Game.WaitForSeconds(animTime, AfterAttack);
-        StartCoroutine(_afterAttack);
+        Timer._.InternalWait(AfterAttack, animTime);
+        // _afterAttack = Game.WaitForSeconds(animTime, AfterAttack);
+        // StartCoroutine(_afterAttack);
     }
 
     private void AfterAttack()
     {
         _afterAttack = null;
-        
+
         if (FightUtils.StopAttacking(this))
         {
             StopAttack();
@@ -185,7 +186,7 @@ public class BasicUnit : MonoBehaviour, IUnit
         for (var i = 0; i < 3; i++)
         {
             int? projectileIndex = null;
-            Projectile sharpnell = FightUtils.GetAvailableProjectile(Projectiles, CreateShrapnell, _onHit, FightUtils.OppositeTeam(UnitInteligence.IAm), ref projectileIndex);
+            Projectile sharpnell = FightUtils.GetAvailableProjectile(Projectiles, CreateShrapnell, _onHit, FightUtils.OppositeTeam(Intell.IAm), ref projectileIndex);
             if (sharpnell == null && projectileIndex != null)
             {
                 sharpnell = Projectiles[projectileIndex.Value];
@@ -196,9 +197,18 @@ public class BasicUnit : MonoBehaviour, IUnit
                 projectileIndex = Projectiles.Count;
             }
 
-            sharpnell.Fire(
-                transform.TransformPoint(ShrapnellPos[i].transform.position), 
-                transform.eulerAngles);
+            // Debug.Log(
+            //     __debug.DebugList<GameObject>(ShrapnellPos, "ShrapnellPos", (go) =>
+            //     {
+            //         return go.name;
+            //     })
+            // );
+            if (__list.isNilOrEmpty(ShrapnellPos) == false)
+            {
+                sharpnell.Fire(
+                    transform.TransformPoint(ShrapnellPos[i].transform.position),
+                    transform.eulerAngles);
+            }
         }
     }
 
@@ -221,8 +231,9 @@ public class BasicUnit : MonoBehaviour, IUnit
             , playImediatly: !firstAttack
             );
 
-        _afterReload = Game.WaitForSeconds(animTime, AfterReload);
-        StartCoroutine(_afterReload);
+        Timer._.InternalWait(AfterReload, animTime);
+        // _afterReload = Game.WaitForSeconds(animTime, AfterReload);
+        // StartCoroutine(_afterReload);
     }
 
     private void InternalIdle()
@@ -251,8 +262,8 @@ public class BasicUnit : MonoBehaviour, IUnit
 
     private void InternalDeath()
     {
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
-        _unitInteligence.UnitActionState = UnitActionState.Searching;
+        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
+        _intell.UnitActionState = UnitActionState.Searching;
 
         StopAttack();
 
@@ -282,9 +293,9 @@ public class BasicUnit : MonoBehaviour, IUnit
     //{
     //    _firePrepTimer = null;
 
-    //    if (_unitInteligence.UnitPrimaryState == UnitPrimaryState.Stunned)
+    //    if (_intell.UnitPrimaryState == UnitPrimaryState.Stunned)
     //        return;
-    //    if (_unitInteligence.UnitPrimaryState != UnitPrimaryState.Busy || _unitInteligence.UnitActionState != UnitActionState.Attacking)
+    //    if (_intell.UnitPrimaryState != UnitPrimaryState.Busy || _intell.UnitActionState != UnitActionState.Attacking)
     //        return;
 
     //    var fireTime = Avatar[AttackForward].length;
@@ -305,12 +316,12 @@ public class BasicUnit : MonoBehaviour, IUnit
     //    _fireTimer = null;
     //    _isReloaded = false;
 
-    //    if (_unitInteligence.UnitPrimaryState == UnitPrimaryState.Stunned)
+    //    if (_intell.UnitPrimaryState == UnitPrimaryState.Stunned)
     //        return;
-    //    if (_unitInteligence.UnitPrimaryState == UnitPrimaryState.Busy && _unitInteligence.UnitActionState == UnitActionState.Attacking)
+    //    if (_intell.UnitPrimaryState == UnitPrimaryState.Busy && _intell.UnitActionState == UnitActionState.Attacking)
     //        Attack();
     //}
-    
+
     //private void GoStun()
     //{
     //    if (_firePrepTimer != null)
@@ -332,8 +343,8 @@ public class BasicUnit : MonoBehaviour, IUnit
     //{
     //    _stunTimer = null;
 
-    //    _unitInteligence.UnitPrimaryState = _statePriorToStun;
-    //    if (_unitInteligence.UnitPrimaryState == UnitPrimaryState.Busy && _unitInteligence.UnitActionState == UnitActionState.Attacking)
+    //    _intell.UnitPrimaryState = _statePriorToStun;
+    //    if (_intell.UnitPrimaryState == UnitPrimaryState.Busy && _intell.UnitActionState == UnitActionState.Attacking)
     //        Attack();
     //}
 

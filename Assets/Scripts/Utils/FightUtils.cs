@@ -11,10 +11,10 @@ namespace Assets.Scripts.Utils
 
         public static bool StopAttacking(IUnit unit)
         {
-            if ((unit.UnitInteligence.UnitPrimaryState != UnitPrimaryState.Busy
-                   || unit.UnitInteligence.UnitActionState != UnitActionState.Attacking
+            if ((unit.Intell.UnitPrimaryState != UnitPrimaryState.Busy
+                   || unit.Intell.UnitActionState != UnitActionState.Attacking
                    || unit.Stats.IsDead)
-                || (unit.UnitInteligence.UnitPrimaryState == UnitPrimaryState.Stunned))
+                || (unit.Intell.UnitPrimaryState == UnitPrimaryState.Stunned))
                 return true;
             return false;
         }
@@ -134,7 +134,7 @@ namespace Assets.Scripts.Utils
 
         //public bool IsFacingObject()
         //{
-        //    var targetEnemy = Game.Instance().GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
+        //    var targetEnemy = Game._.GetUnit(_targetEnemyTeam, _targetEnemyIndex.Value);
 
         //    // Check if the gaze is looking at the front side of the object
         //    Vector3 forward = transform.forward;

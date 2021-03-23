@@ -45,14 +45,18 @@ public class MapController : MonoBehaviour
             }
         }
 
-        Move(PlatformPosition.Down, snap: true, reset: true);
+        if (CurrentPlatformPosition == PlatformPosition.Up)
+        {
+            Move(PlatformPosition.Down, snap: true, reset: true);
+        }
     }
 
     public void Move(PlatformPosition platformPosition, float timeMultiplier = 1f, bool snap = false, bool reset = false)
     {
         CurrentPlatformPosition = platformPosition;
 
-        if (reset) {
+        if (reset)
+        {
             for (var i = 0; i < Blocks.Count; i++)
             {
                 Blocks[i].position = Vector3.zero;

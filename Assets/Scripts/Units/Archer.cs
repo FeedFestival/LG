@@ -24,8 +24,8 @@ public class Archer : MonoBehaviour, IUnit
     private int _index;
     public int Index { get { return _index; } set { _index = value; } }
 
-    private UnitInteligence _unitInteligence;
-    public UnitInteligence UnitInteligence { get { return _unitInteligence; } set { _unitInteligence = value; } }
+    private Intell _intell;
+    public Intell Intell { get { return _intell; } set { _intell = value; } }
 
     private Stats _stats;
     public Stats Stats { get { return _stats; } set { _stats = value; } }
@@ -34,7 +34,7 @@ public class Archer : MonoBehaviour, IUnit
     {
         _onHit = onHit;
 
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
+        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
         Arrow.gameObject.SetActive(false);
 
         if (Stats.AttackSpeed == 0)
@@ -93,10 +93,10 @@ public class Archer : MonoBehaviour, IUnit
 
     private void InternalAttack()
     {
-        var firstAttack = _unitInteligence.UnitActionState != UnitActionState.Attacking;
+        var firstAttack = _intell.UnitActionState != UnitActionState.Attacking;
 
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Busy;
-        _unitInteligence.UnitActionState = UnitActionState.Attacking;
+        _intell.UnitPrimaryState = UnitPrimaryState.Busy;
+        _intell.UnitActionState = UnitActionState.Attacking;
 
         if (Avatar == null)
             return;
@@ -110,8 +110,7 @@ public class Archer : MonoBehaviour, IUnit
 
         InternalReload(firstAttack: firstAttack);
 
-        _afterReload = Game.WaitForSeconds(animTime, AfterReload);
-        StartCoroutine(_afterReload);
+        Timer._.InternalWait(AfterReload, animTime);
     }
 
     private void AttackSpeedChanged()
@@ -155,11 +154,13 @@ public class Archer : MonoBehaviour, IUnit
         var animTime = AnimationUtils.GetAnimationLength(Avatar, "Attack_Body", basedOnSpeed: true);
         var arrowExpirationTime = animTime / 6;
 
-        _fireProjectile = Game.WaitForSeconds(arrowExpirationTime, FireProjectile);
-        StartCoroutine(_fireProjectile);
+        Timer._.InternalWait(FireProjectile, arrowExpirationTime);
+        // _fireProjectile = Game.WaitForSeconds(arrowExpirationTime, FireProjectile);
+        // StartCoroutine(_fireProjectile);
 
-        _afterAttack = Game.WaitForSeconds(animTime, AfterAttack);
-        StartCoroutine(_afterAttack);
+        Timer._.InternalWait(AfterAttack, animTime);
+        // _afterAttack = Game.WaitForSeconds(animTime, AfterAttack);
+        // StartCoroutine(_afterAttack);
     }
 
     private void AfterAttack()
@@ -206,7 +207,7 @@ public class Archer : MonoBehaviour, IUnit
             Arrows = new List<Projectile>();
 
         int? projectileIndex = null;
-        Projectile arrowP = FightUtils.GetAvailableProjectile(Arrows, CreateArrow, _onHit, FightUtils.OppositeTeam(UnitInteligence.IAm), ref projectileIndex);
+        Projectile arrowP = FightUtils.GetAvailableProjectile(Arrows, CreateArrow, _onHit, FightUtils.OppositeTeam(Intell.IAm), ref projectileIndex);
         if (arrowP == null && projectileIndex != null)
         {
             arrowP = Arrows[projectileIndex.Value];
@@ -216,7 +217,7 @@ public class Archer : MonoBehaviour, IUnit
             Arrows.Add(arrowP);
             projectileIndex = Arrows.Count;
         }
-        var pos = UnitInteligence._attackController.GetEnemyTargetPosition();
+        var pos = Intell._attackController.GetEnemyTargetPosition();
 
         // fire projectile
         arrowP.Fire(pos, transform.eulerAngles);
@@ -270,8 +271,8 @@ public class Archer : MonoBehaviour, IUnit
 
     private void InternalDeath()
     {
-        _unitInteligence.UnitPrimaryState = UnitPrimaryState.Idle;
-        _unitInteligence.UnitActionState = UnitActionState.Searching;
+        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
+        _intell.UnitActionState = UnitActionState.Searching;
 
         StopAttack();
 

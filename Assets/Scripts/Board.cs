@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.Utils;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,14 +7,11 @@ public class Board : MonoBehaviour
     /*
      * Singleton GAME!
      */
-    private static Board _board;
-    public static Board Instance()
-    {
-        return _board;
-    }
+    private static Board _this;
+    public static Board _ { get { return _this; } }
     void Awake()
     {
-        _board = this;
+        _this = this;
 
         BuildingGrid.SetActive(false);
     }
@@ -56,7 +51,7 @@ public class Board : MonoBehaviour
     int box2Y;
     int box3X;
     int box3Y;
-    
+
     void Start()
     {
         _unitsToSelectPosition = new Vector3(0, 100, 100);
@@ -64,20 +59,20 @@ public class Board : MonoBehaviour
 
     public void Init(string raceProgId)
     {
-        var race = Game.Instance().DataService.GetRace(raceProgId);
-        var units = Game.Instance().DataService.GetRaceUnits(race.Id);
+        var race = Game._.DataService.GetRace(raceProgId);
+        var units = Game._.DataService.GetRaceUnits(race.Id);
 
-        Game.Instance().UiController.BoardPanel.SetActive(true);
+        BoardController._.gameObject.SetActive(true);
 
         PlayerUnitsPool = new List<Unit>();
 
-        // 2. Show Units in the ui.
+        // 2.Show Units in the ui.
         foreach (UnitData unit in units)
         {
             GameObject go = Instantiate(
-            Resources.Load("Prefabs/UI/UnitBoardData", typeof(GameObject)),
-            Vector3.zero, Quaternion.identity,
-            Game.Instance().UiController.BoardListPanel.transform
+                Resources.Load("Prefabs/UI/UnitBoardData", typeof(GameObject)),
+                Vector3.zero, Quaternion.identity,
+                BoardController._.BoardListPanel.transform
             ) as GameObject;
             var rect = go.GetComponent<RectTransform>();
             rect.localPosition = Vector3.zero;
@@ -121,12 +116,14 @@ public class Board : MonoBehaviour
 
         GameObject go = Instantiate(UnitGoInHand, UnitGoInHand.transform.position, UnitGoInHand.transform.rotation) as GameObject;
 
-        Fight.Instance().AddPlayerUnit(go.GetComponent<Unit>());
+        Fight._.AddPlayerUnit(go.GetComponent<Unit>());
 
         UnitGoInHand = null;
         Debug.Log("- reset position");
         if (_moveUnitInHand != null)
+        {
             LeanTween.cancel(_moveUnitInHand.id);
+        }
         PlayerUnitsPool[SelectedUnitIndex].gameObject.transform.localPosition = _unitsToSelectPosition;
     }
 
@@ -169,7 +166,7 @@ public class Board : MonoBehaviour
 
         boardX = x;
         boardY = y;
-        
+
         // base off of unit.
         var unitGridSize = 4;
         if (unitGridSize == 4)
@@ -220,7 +217,7 @@ public class Board : MonoBehaviour
     {
         if (MapController.CurrentPlatformPosition == MapController.PlatformPosition.Down)
         {
-            StartCoroutine(Game.WaitForSeconds(MapController.GetLastBlockTimeToPosition(), ShowGrid));
+            Timer._.InternalWait(ShowGrid, MapController.GetLastBlockTimeToPosition());
         }
         else
         {

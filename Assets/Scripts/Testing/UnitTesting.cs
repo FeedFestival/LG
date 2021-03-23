@@ -11,19 +11,19 @@ public class UnitTesting : MonoBehaviour
     void Start()
     {
         DummyUnit.Init(0, IAm.Enemy);
-        DummyUnit.UnitInteligence.IsImobilized = true;
-        DummyUnit.UnitInteligence.SetActiveSenses(false);
+        DummyUnit.Intell.IsImobilized = true;
+        DummyUnit.Intell.SetActiveSenses(false);
 
         TestUnit.Init(0, IAm.Ally);
-        TestUnit.UnitInteligence.SetActiveSenses(false);
-        Game.Instance().UiController.UnitTestingPanel.SetActive(true);
+        TestUnit.Intell.SetActiveSenses(false);
+        // UiController._.UnitTestingPanel.SetActive(true);
     }
 
     public void AttackDummy()
     {
-        Fight.Instance().TestFight(TestUnit, DummyUnit);
+        Fight._.TestFight(TestUnit, DummyUnit);
 
-        //DummyUnit.UnitInteligence.SetActiveSenses(false);
-        TestUnit.UnitInteligence.SetActiveSenses(true);
+        //DummyUnit.Intell.SetActiveSenses(false);
+        TestUnit.Intell.SetActiveSenses(true);
     }
 }
