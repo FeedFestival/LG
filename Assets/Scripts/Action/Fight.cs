@@ -27,14 +27,24 @@ public class Fight : MonoBehaviour
     internal void TestFight(Unit testUnit, Unit dummyUnit)
     {
         if (PlayerUnits == null)
-            PlayerUnits.Add(testUnit);
+        {
+            PlayerUnits = new List<Unit>() { testUnit };
+            // PlayerUnits.Add(testUnit);
+        }
         else
+        {
             PlayerUnits[0] = testUnit;
+        }
 
         if (EnemyUnits == null)
-            EnemyUnits.Add(dummyUnit);
+        {
+            EnemyUnits = new List<Unit>() { dummyUnit };
+            // EnemyUnits.Add(dummyUnit);
+        }
         else
+        {
             EnemyUnits[0] = dummyUnit;
+        }
 
         ExecuteOrder66(testUnit, dummyUnit.transform);
     }

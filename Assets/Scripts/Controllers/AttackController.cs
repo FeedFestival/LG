@@ -40,7 +40,7 @@ public class AttackController : MonoBehaviour
         _moveController.StopMoving(false);
         _unit.Attack();
 
-        FightUtils.FaceEnemy(unitGo.transform.position, transform);
+        FightUtils.FaceEnemy(unitGo.transform.position, transform, onlyY: false);
         
         Intell.AtackSensor.gameObject.SetActive(false);
     }

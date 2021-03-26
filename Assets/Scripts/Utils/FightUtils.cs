@@ -120,15 +120,19 @@ namespace Assets.Scripts.Utils
             return (int)(defaultAttackSpeed * 100);
         }
 
-        public static void FaceEnemy(Vector3 enemyPosition, Transform t, bool onlyY = true,float time = 1f)
+        public static void FaceEnemy(Vector3 enemyPosition, Transform t, bool onlyY = true, float time = 1f)
         {
             Vector3 dir = (enemyPosition - t.position);
             Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
             Vector3 eulerAngles;
             if (onlyY)
+            {
                 eulerAngles = new Vector3(t.position.x, rot.eulerAngles.y, t.position.z);
+            }
             else
+            {
                 eulerAngles = new Vector3(0, rot.eulerAngles.y, 0);
+            }
             LeanTween.rotate(t.gameObject, eulerAngles, time);
         }
 

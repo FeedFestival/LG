@@ -13,20 +13,8 @@ public class Intell : MonoBehaviour
     public AttackController _attackController;
 
     [SerializeField]
-    private UnitPrimaryState _unitPrimaryState;
-    public UnitPrimaryState UnitPrimaryState
-    {
-        get
-        {
-            return _unitPrimaryState;
-        }
-        set
-        {
-            _unitPrimaryState = value;
-            if (_unit != null)
-                _unit.ChangeState(_unitPrimaryState);
-        }
-    }
+
+    public UnitPrimaryState UnitPrimaryState;
 
     [SerializeField]
     private UnitActionState _unitActionState;
@@ -79,6 +67,15 @@ public class Intell : MonoBehaviour
         else
         {
             ViewSensor.Init(lookFor.ToString(), true, EnemyInViewRange);
+        }
+    }
+
+    public void SetPrimaryState(UnitPrimaryState state, bool changeState = false)
+    {
+        UnitPrimaryState = state;
+        if (_unit != null && changeState == true)
+        {
+            _unit.ChangeState(UnitPrimaryState);
         }
     }
 

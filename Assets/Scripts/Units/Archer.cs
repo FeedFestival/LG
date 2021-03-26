@@ -34,7 +34,7 @@ public class Archer : MonoBehaviour, IUnit
     {
         _onHit = onHit;
 
-        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
+        Intell.SetPrimaryState(UnitPrimaryState.Idle, changeState: true);
         Arrow.gameObject.SetActive(false);
 
         if (Stats.AttackSpeed == 0)
@@ -95,7 +95,7 @@ public class Archer : MonoBehaviour, IUnit
     {
         var firstAttack = _intell.UnitActionState != UnitActionState.Attacking;
 
-        _intell.UnitPrimaryState = UnitPrimaryState.Busy;
+        Intell.SetPrimaryState(UnitPrimaryState.Busy, changeState: true);
         _intell.UnitActionState = UnitActionState.Attacking;
 
         if (Avatar == null)
@@ -249,6 +249,9 @@ public class Archer : MonoBehaviour, IUnit
     {
         StopAttack();
 
+        Intell.SetPrimaryState(UnitPrimaryState.Idle);
+        _intell.UnitActionState = UnitActionState.Searching;
+
         Arrow.gameObject.SetActive(false);
         AnimationUtils.PlayAnimation(
             "Idle", Avatar
@@ -261,6 +264,9 @@ public class Archer : MonoBehaviour, IUnit
     {
         StopAttack();
 
+        Intell.SetPrimaryState(UnitPrimaryState.Walk);
+        _intell.UnitActionState = UnitActionState.Searching;
+
         Arrow.gameObject.SetActive(false);
         AnimationUtils.PlayAnimation(
             "Run", Avatar
@@ -271,7 +277,7 @@ public class Archer : MonoBehaviour, IUnit
 
     private void InternalDeath()
     {
-        _intell.UnitPrimaryState = UnitPrimaryState.Idle;
+        Intell.SetPrimaryState(UnitPrimaryState.Idle, changeState: true);
         _intell.UnitActionState = UnitActionState.Searching;
 
         StopAttack();

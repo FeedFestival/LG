@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts.LevelService;
 using UnityEngine;
 
-public class UnitTesting : MonoBehaviour
+public class UnitTesting : MonoBehaviour, ILevel
 {
     public Unit TestUnit;
     public Unit DummyUnit;
 
     // Use this for initialization
-    void Start()
+    public void StartLevel()
     {
         DummyUnit.Init(0, IAm.Enemy);
         DummyUnit.Intell.IsImobilized = true;
@@ -16,7 +15,7 @@ public class UnitTesting : MonoBehaviour
 
         TestUnit.Init(0, IAm.Ally);
         TestUnit.Intell.SetActiveSenses(false);
-        // UiController._.UnitTestingPanel.SetActive(true);
+        UnitTestingController._.gameObject.SetActive(true);
     }
 
     public void AttackDummy()

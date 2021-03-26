@@ -14,12 +14,12 @@ public class MoveController : MonoBehaviour
 
     private NavMeshAgent _navAgent;
     private IUnit _unit;
-    
+
     private IEnumerator _followTarget;
 
     private bool _lerpRotComplete = true;
     private Vector3 _lastTarget;
-    
+
     private float _walkTurnSpeed;
     //private float _turnSpeed;
     private float _lerpTime;
@@ -76,7 +76,7 @@ public class MoveController : MonoBehaviour
         {
             transform.rotation = WorldUtils.SmoothLook(
                 transform.rotation,
-                WorldUtils.GetDirection(transform.position, _lastTarget), 
+                WorldUtils.GetDirection(transform.position, _lastTarget),
                 _walkTurnSpeed);
         }
     }
@@ -97,7 +97,7 @@ public class MoveController : MonoBehaviour
         if (_navAgent.enabled == false)
             _navAgent.enabled = true;
         _navAgent.isStopped = true;
-    
+
         if (targetReached)
         {
             //  If we finish the journey
@@ -116,13 +116,13 @@ public class MoveController : MonoBehaviour
             //      - And for some reason the unit is Busy - dont go into Attack.
             if (Intell.UnitPrimaryState != UnitPrimaryState.Busy)
             {
-                Intell.UnitPrimaryState = UnitPrimaryState.Idle;
+                Intell.SetPrimaryState(UnitPrimaryState.Idle, changeState: true);
                 //_unit.UnitBasicAnimation.Play(_unit.UnitPrimaryState);
             }
         }
         else
         {
-            Intell.UnitPrimaryState = UnitPrimaryState.Idle;
+            Intell.SetPrimaryState(UnitPrimaryState.Idle, changeState: true);
             //_unit.UnitBasicAnimation.Play(_unit.UnitPrimaryState);
 
             StopCoroutine(_lerpRotation);
@@ -139,7 +139,7 @@ public class MoveController : MonoBehaviour
         JustMove(UnitTarget.transform.position);
         _navAgent.isStopped = false;
 
-        Intell.UnitPrimaryState = UnitPrimaryState.Walk;
+        Intell.SetPrimaryState(UnitPrimaryState.Walk, changeState: true);
     }
 
     private void JustMove(Vector3 pos)
@@ -147,7 +147,9 @@ public class MoveController : MonoBehaviour
         try
         {
             _navAgent.SetDestination(pos);
-        } catch (System.Exception e) {
+        }
+        catch (System.Exception e)
+        {
             Debug.LogError(gameObject.name + ": " + e);
         }
     }
@@ -176,7 +178,7 @@ public class MoveController : MonoBehaviour
             Debug.LogWarning(gameObject.name + " is Following " + targetTransform.gameObject.name + " which is dead ?");
             return;
         }
-        
+
         UnitTarget.transform.position = targetTransform.position;
         UnitTarget.transform.SetParent(targetTransform);
 
@@ -195,7 +197,9 @@ public class MoveController : MonoBehaviour
             try
             {
                 JustMove(UnitTarget.transform.position);
-            } catch (System.Exception e) {
+            }
+            catch (System.Exception e)
+            {
                 Debug.LogError(gameObject.name + " - UnitTarget is gone. :( : " + e);
             }
         }
