@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts;
 using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,20 +9,16 @@ public class MoveController : MonoBehaviour
 
     [HideInInspector]
     public Intell Intell;
+    public TriggerListener MovementSensor;
 
     private NavMeshAgent _navAgent;
     private IUnit _unit;
 
     private IEnumerator _followTarget;
-
-    private bool _lerpRotComplete = true;
+    [SerializeField]
     private Vector3 _lastTarget;
-
-    private float _walkTurnSpeed;
-    //private float _turnSpeed;
-    private float _lerpTime;
-
-    IEnumerator _lerpRotation;
+    public float WalkTurnSpeed;
+    private int? _steerTid;
 
     public void Init(
         string unitName,
@@ -37,59 +31,59 @@ public class MoveController : MonoBehaviour
         _unit = unit;
 
         if (startImobilized)
+        {
             _navAgent.enabled = false;
-
-        // Init Values
-        _walkTurnSpeed = 11.0f;
-        //_turnSpeed = 4.0f;
-        _lerpTime = 0.6f;
-
-        _lerpRotation = LerpToRotation();
+            _navAgent.updateRotation = false;
+        }
 
         if (UnitTarget == null)
         {
             UnitTarget = WorldUtils.CreateUnitTarget(unitName);
         }
-    }
 
-    void Update()
-    {
-        if (_unit == null)
-            return;
-
-        if (Intell.UnitPrimaryState == UnitPrimaryState.Walk)
+        if (MovementSensor == null)
         {
-            SteerWalkingDirection();
+            Debug.LogError(unitName + " - has no Movement Sensor");
+        }
+        else
+        {
+            MovementSensor.Init("Navigation", true, (_) =>
+            {
+                StopMoving(true);
+            });
         }
     }
 
-    public void SteerWalkingDirection()
+    void LateUpdate()
     {
-        if (_lastTarget != _navAgent.steeringTarget)
-        {
-            _lastTarget = _navAgent.steeringTarget;
+        if (_navAgent == null || _unit == null) { return; }
 
-            if (_lerpRotComplete == true)
-                StartCoroutine(_lerpRotation);
-        }
-        if (_lerpRotComplete == false && _lastTarget != Vector3.zero)
+        if (_navAgent.path.corners != null && _navAgent.path.corners.Length > 1)
         {
-            transform.rotation = WorldUtils.SmoothLook(
-                transform.rotation,
-                WorldUtils.GetDirection(transform.position, _lastTarget),
-                _walkTurnSpeed);
+            if (_lastTarget == _navAgent.path.corners[1])
+            {
+                return;
+            }
+            _lastTarget = _navAgent.path.corners[1];
+
+            Vector3 dir = (_lastTarget - transform.position);
+            Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+            SteerWalkingDirection(rot);
         }
     }
 
-    private IEnumerator LerpToRotation()
+    public void SteerWalkingDirection(Quaternion rot)
     {
-        _navAgent.updateRotation = false;
-        _lerpRotComplete = false;
-
-        yield return new WaitForSeconds(_lerpTime);
-
-        _lerpRotComplete = true;
-        _navAgent.updateRotation = true;
+        if (_steerTid.HasValue)
+        {
+            LeanTween.cancel(_steerTid.Value);
+        }
+        _steerTid = LeanTween.rotate(gameObject, rot.eulerAngles, WalkTurnSpeed).id;
+        LeanTween.descr(_steerTid.Value).setEase(LeanTweenType.easeOutCubic);
+        LeanTween.descr(_steerTid.Value).setOnComplete(() =>
+        {
+            _steerTid = null;
+        });
     }
 
     public void StopMoving(bool targetReached = true)
@@ -125,7 +119,7 @@ public class MoveController : MonoBehaviour
             Intell.SetPrimaryState(UnitPrimaryState.Idle, changeState: true);
             //_unit.UnitBasicAnimation.Play(_unit.UnitPrimaryState);
 
-            StopCoroutine(_lerpRotation);
+            // StopCoroutine(_lerpRotation);
             UnitTarget.transform.position = _navAgent.gameObject.transform.position;
         }
 
@@ -146,7 +140,16 @@ public class MoveController : MonoBehaviour
     {
         try
         {
+            // TODO: get the last Endpoint
+            // - And show the move indicator there;
+
             _navAgent.SetDestination(pos);
+
+            // var debugPath = __debug.DebugList<Vector3>(_navAgent.path.corners.ToList(), "debugPath", (Vector3 p) =>
+            // {
+            //     return p.ToString();
+            // });
+            // Debug.Log("debugPath: " + debugPath);
         }
         catch (System.Exception e)
         {

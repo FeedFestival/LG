@@ -61,7 +61,8 @@ public class Unit : MonoBehaviour
         //MoveController.StopMoving(targetReached: false);
     }
 
-    public void BoardSetup(int unitId) {
+    public void BoardSetup(int unitId)
+    {
         DataId = unitId;
 
         _unit = GetComponent<IUnit>();
@@ -92,7 +93,8 @@ public class Unit : MonoBehaviour
         navAgent.enabled = false;
     }
 
-    private void SetupInteligence(IAm iAm) {
+    private void SetupInteligence(IAm iAm)
+    {
         Intell = GetComponent<Intell>();
         if (Intell == null)
         {

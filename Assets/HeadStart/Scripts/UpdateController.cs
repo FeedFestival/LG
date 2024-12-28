@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class UpdateController : MonoBehaviour
 {
-    static UpdateController _updateController;
-    public static UpdateController _ { get { return _updateController; } }
+    static UpdateController _this;
+    public static UpdateController _ { get { return _this; } }
 
     void Awake()
     {
-        _updateController = this;
+        _this = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+	    
     }
 }

@@ -38,6 +38,7 @@ public enum UnitActionInMind
 
 public enum IAm
 {
+    Player,
     Enemy,
     Ally
 }

@@ -26,12 +26,15 @@ public class TriggerListener : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (DebugThis)
+        {
             Debug.Log(
                 "GO: " + other.name +
                 "tag: " + other.tag
                 );
+        }
 
         if (_onEnter != null)
+        {
             if (_equals && other.tag == _tagToCheck)
             {
                 _onEnter(other.gameObject);
@@ -40,5 +43,6 @@ public class TriggerListener : MonoBehaviour
             {
                 _onEnter(other.gameObject);
             }
+        }
     }
 }

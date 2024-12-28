@@ -53,17 +53,25 @@ public class Intell : MonoBehaviour
         // vars
         _unit = unit;
 
-        // sensors
-        var lookFor = IAm == IAm.Ally ? IAm.Enemy : IAm.Ally;
-
         if (gameObject.GetComponent<Rigidbody>() == null)
             Debug.LogError("I have no Rigidbody, I can't be seen by sensors!");
 
         if (gameObject.GetComponent<CapsuleCollider>() == null)
             Debug.LogError("I have no CapsuleCollider, I can't be seen by sensors!");
 
+        if (IAm == IAm.Player)
+        {
+            if (ViewSensor != null)
+            {
+                ViewSensor.gameObject.SetActive(false);
+            }
+            return;
+        }
+        var lookFor = IAm == IAm.Ally ? IAm.Enemy : IAm.Ally;
         if (ViewSensor == null)
+        {
             Debug.LogError("I have no view Sensor !");
+        }
         else
         {
             ViewSensor.Init(lookFor.ToString(), true, EnemyInViewRange);

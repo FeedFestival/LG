@@ -140,7 +140,13 @@ public class Fight : MonoBehaviour
         rect.localEulerAngles = Vector3.zero;
 
         var hp = go.GetComponent<HealthBar>();
-        var hpColor = (iAm == IAm.Ally) ? ColorBank._.Green_Pastel_Darker : ColorBank._.Red_Maroon_Flush;
+        Color hpColor = ColorBank._.Red_Maroon_Flush;
+        if (iAm == IAm.Ally) {
+            hpColor = ColorBank._.Green_Pastel_Darker;
+        } else if (iAm == IAm.Player) {
+            hpColor = ColorBank._.Blue_Cornflower;
+        }
+        
         hp.HealthImage.color = hpColor;
         hp.Init(unit, hpTarget, HealthBarController._.CanvasRect);
         return hp;

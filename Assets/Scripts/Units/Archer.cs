@@ -263,7 +263,6 @@ public class Archer : MonoBehaviour, IUnit
     private void InternalRun()
     {
         StopAttack();
-
         Intell.SetPrimaryState(UnitPrimaryState.Walk);
         _intell.UnitActionState = UnitActionState.Searching;
 

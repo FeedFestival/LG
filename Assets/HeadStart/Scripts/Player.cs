@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public PlayerMouse PlayerMouse;
+    public PlayerIntention PlayerIntention;
+    //--------------------------------------------
+    public Unit Unit;
+    public MoveIndicator MoveIndicator;
 
-    // Update is called once per frame
-    void Update()
+    public void ShowMoveIndicator(Vector3 pos)
     {
-        
+        MoveIndicator.transform.position = pos;
+        MoveIndicator.Play();
     }
+}
+
+public enum PlayerMouse
+{
+    None
+}
+
+public enum PlayerIntention
+{
+    None
 }
